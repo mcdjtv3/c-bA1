@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Costing and Budgeting Fundamentals</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What is the primary focus of management accounting?", choices: ["Adherence to GAAP", "Monitoring and analyzing business activities to support decision-making", "External financial reporting", "Valuing a company's total worth"], correct: 1 },
+        { question: "Which of the following is not a key difference between management accounting and financial accounting?", choices: ["Management accounting is future-oriented, while financial accounting is past-oriented", "Financial accounting adheres to standardized principles, while management accounting does not", "Management accounting focuses on external reporting, while financial accounting focuses on internal reporting", "Management accounting is tailored to specific needs, while financial accounting follows GAAP"], correct: 2 },
+        { question: "What is a cost object?", choices: ["A report detailing past costs", "Any item for which cost measurement is desired, such as a product, service, or project", "A specific expense tracked in the financial statements", "A forecast of future expenses"], correct: 1 },
+        { question: "Which of the following best describes fixed costs?", choices: ["Costs that increase with production", "Costs that remain constant regardless of the level of business activity", "Costs directly related to the production of goods", "Costs that fluctuate with changes in sales volume"], correct: 1 },
+        { question: "What is the main challenge in setting a retail price using full costs?", choices: ["Allocating indirect costs to products", "Determining the price ceiling for customers", "Estimating future revenues", "Calculating variable costs"], correct: 0 },
+        { question: "In full costing, which of the following is not included?", choices: ["Direct costs", "Variable costs", "Fixed costs", "Historical costs"], correct: 3 },
+        { question: "What is the primary purpose of cost pools?", choices: ["To group together individual indirect cost items for allocation to cost objects", "To track variable costs only", "To determine the profitability of individual products", "To calculate direct labor costs"], correct: 0 },
+        { question: "What is an example of a cost driver?", choices: ["The volume of production", "The type of product manufactured", "The price of raw materials", "The time spent on inventory control"], correct: 0 },
+        { question: "Which type of cost cannot be conveniently traced to a cost object?", choices: ["Direct costs", "Variable costs", "Indirect costs", "Fixed costs"], correct: 2 },
+        { question: "What is the overhead allocation rate formula?", choices: ["Total variable costs / Direct costs", "Total indirect costs / Allocation base", "Total fixed costs / Sales", "Indirect costs / Product margin"], correct: 1 },
+        { question: "Which costing method allocates indirect costs based on the activities that generate costs?", choices: ["Ratio allocation method", "Activity-Based Costing (ABC)", "Traditional costing", "Direct costing"], correct: 1 },
+        { question: "In the context of full costing, what are inventoriable costs?", choices: ["Costs treated as expenses immediately", "Costs that are expensed only after the product is sold", "Costs related to inventory shortages", "Period costs incurred during production"], correct: 1 },
+        { question: "Which of the following is not an advantage of using the cost pool method?", choices: ["It can provide a more accurate reflection of cost distribution", "It is relatively easy to computerize", "It is less complex to implement than other methods", "It allocates costs based on measurable variables"], correct: 2 },
+        { question: "What is the key limitation of the cost pool method?", choices: ["It cannot track fixed costs", "It tends to lose accuracy in contemporary situations where indirect costs are increasingly important", "It relies too heavily on variable costs", "It ignores administrative overhead"], correct: 1 },
+        { question: "In which scenario would period costs be expensed?", choices: ["When inventory is purchased", "When inventory is produced but not yet sold", "During the same period they are incurred", "After the completion of a project"], correct: 2 },
+        { question: "What does monitoring business activity help achieve in management accounting?", choices: ["Accurate external reporting", "Inventory valuation only", "Decision-making and performance analysis", "Financial compliance with accounting standards"], correct: 2 },
+        { question: "Which of the following is not considered a direct cost?", choices: ["Materials used in production", "Direct labor", "Administrative salaries", "Factory workers' wages"], correct: 2 },
+        { question: "What is the main goal of allocating costs to cost objects?", choices: ["To meet tax compliance requirements", "To improve managerial decision-making and pricing strategies", "To maximize profitability", "To eliminate fixed costs"], correct: 1 },
+        { question: "Which of the following statements about variable costs is true?", choices: ["Variable costs remain constant regardless of production volume", "Variable costs are always less than fixed costs", "Variable costs fluctuate in proportion to the quantity produced or sold", "Variable costs are independent of the cost object"], correct: 2 },
+        { question: "Why is non-financial information important in management accounting?", choices: ["It ensures compliance with financial regulations", "It helps in understanding business volumes and operational performance", "It is used for preparing profit and loss statements", "It determines the final cost of the product"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
